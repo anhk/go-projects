@@ -7,7 +7,6 @@ all: $(OBJ)
 
 $(OBJ):
 	go mod tidy && go build -gcflags "-N -l" -o $@ .
-	#cp -af $(OBJ) ./docker/
 
 clean:
 	rm -fr $(OBJ)
@@ -15,5 +14,5 @@ clean:
 -include .deps
 dep:
 	echo -n "$(OBJ):" > .deps
-	find src -name '*.go' | awk '{print $$0 " \\"}' >> .deps
+	find . -name '*.go' | awk '{print $$0 " \\"}' >> .deps
 	echo "" >> .deps
