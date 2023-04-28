@@ -32,10 +32,10 @@ func main() {
 	data := make([]byte, 8192)
 
 	response := struct {
-		Server   string
-		Hostname string
-		Data     string
-		Now      int64
+		ClientAddress string
+		Hostname      string
+		Data          string
+		Now           int64
 	}{
 		Hostname: host,
 	}
@@ -44,7 +44,7 @@ func main() {
 		n, addr, err := sock.ReadFromUDP(data)
 		Throw(err)
 
-		response.Server = addr.IP.String()
+		response.ClientAddress = addr.IP.String()
 		response.Data = string(data[:n])
 		response.Now = time.Now().UnixNano()
 
