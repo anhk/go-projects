@@ -6,7 +6,6 @@ import (
 	"net"
 	"os"
 	"runtime/debug"
-	"strconv"
 )
 
 func Throw(err any) {
@@ -19,16 +18,15 @@ func Throw(err any) {
 
 var (
 	addr = flag.String("t", "", "udp server address")
-	port = flag.String("p", "", "udp server port")
+	port = flag.Int("p", 33333, "udp server port")
 	data = flag.String("d", "test", "data to be sent")
 	typ  = flag.Bool("1", false, "use sendmsg instead of connect")
-	v6   = flag.Bool("6", false, "use ipv6 network")
 )
 
 func main() {
 	flag.Parse()
 
-	if *addr == "" || *port == "" {
+	if *addr == "" {
 		flag.Usage()
 		os.Exit(-1)
 	}
@@ -49,12 +47,9 @@ func If[T any](cond bool, a, b T) T {
 
 func SendMessageBySendMsg() {
 	localPort := RandomInt(40000, 50000)
-	remotePort, err := strconv.Atoi(*port)
-	Throw(err)
+	remotePort := *port
 
-	proto := If(!*v6, "udp4", "udp")
-
-	sock, err := net.ListenUDP(proto, &net.UDPAddr{Port: localPort})
+	sock, err := net.ListenUDP("udp", &net.UDPAddr{Port: localPort})
 	Throw(err)
 
 	remoteAddr := net.UDPAddr{
