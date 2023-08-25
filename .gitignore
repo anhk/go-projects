@@ -21,5 +21,6 @@
 go.work
 /.idea
 /.vscode
-udpsend/udpsend
+curl-with-linger/curl-linger
+udp-send/udpsend
 .deps
