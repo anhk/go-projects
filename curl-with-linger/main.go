@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"net/url"
 	"os"
 	"strings"
 	"time"
@@ -20,10 +21,15 @@ func main() {
 		os.Exit(-1)
 	}
 
-	url := args[1]
-	if !strings.HasPrefix(url, "http://") && !strings.HasPrefix(url, "https://") {
-		url = fmt.Sprintf("http://%v", url)
+	u := args[1]
+
+	if !strings.HasPrefix(u, "http://") && !strings.HasPrefix(u, "https://") {
+		u = fmt.Sprintf("http://%v", u)
 	}
+
+	uu, err := url.Parse(u)
+	Must(err)
+
 	var netTransport = &http.Transport{
 		DialContext: func(ctx context.Context, network, addr string) (net.Conn, error) {
 			conn, err := net.Dial(network, addr)
@@ -41,7 +47,8 @@ func main() {
 	}
 
 	result := make(map[string]any)
-	err := requests.URL(url).Client(netClient).Path("/").ToJSON(&result).Fetch(context.Background())
+	err = requests.URL(fmt.Sprintf("%s://%s", uu.Scheme, uu.Host)).
+		Client(netClient).Path(uu.Path).ToJSON(&result).Fetch(context.Background())
 	Must(err)
 
 	data, err := json.MarshalIndent(result, "", "  ")
