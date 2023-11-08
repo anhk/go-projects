@@ -7,6 +7,7 @@ import (
 	"net"
 	"os"
 	"runtime/debug"
+	"strings"
 )
 
 func Throw(err any) {
@@ -18,10 +19,11 @@ func Throw(err any) {
 }
 
 var (
-	addr = flag.String("t", "", "udp server address")
-	port = flag.Int("p", 33333, "udp server port")
-	data = flag.String("d", "test", "data to be sent")
-	typ  = flag.Bool("1", false, "use sendmsg instead of connect")
+	addr    = flag.String("t", "", "udp server address")
+	port    = flag.Int("p", 33333, "udp server port")
+	data    = flag.String("d", "test", "data to be sent")
+	typ     = flag.Bool("1", false, "use sendmsg instead of connect")
+	datalen = flag.Int("s", 4, "data size")
 )
 
 func main() {
@@ -37,6 +39,21 @@ func main() {
 	} else {
 		SendMessageByConnect()
 	}
+}
+
+func expandToDatalen(data string, datalen int) []byte {
+	var arr []string
+	for {
+		if datalen > len(data) {
+			arr = append(arr, data)
+			datalen -= len(data)
+		} else {
+			arr = append(arr, data[:datalen])
+			break
+		}
+	}
+
+	return []byte(strings.Join(arr, ""))
 }
 
 func If[T any](cond bool, a, b T) T {
@@ -57,7 +74,7 @@ func SendMessageBySendMsg() {
 
 	log.Debugf("[sendmsg] udp remote address: %v", remoteAddr.String())
 
-	_, err = sock.WriteTo([]byte(*data), &remoteAddr)
+	_, err = sock.WriteTo(expandToDatalen(*data, *datalen), &remoteAddr)
 	Throw(err)
 
 	res := make([]byte, 8192)
@@ -74,7 +91,7 @@ func SendMessageByConnect() {
 	sock, err := net.Dial("udp", remoteAddr.String())
 	Throw(err)
 
-	_, err = sock.Write([]byte(*data))
+	_, err = sock.Write(expandToDatalen(*data, *datalen))
 	Throw(err)
 
 	res := make([]byte, 8192)
