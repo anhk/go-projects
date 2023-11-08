@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"go-projects/pkg/log"
 	"net"
 	"os"
 	"runtime/debug"
@@ -52,10 +53,9 @@ func SendMessageBySendMsg() {
 	sock, err := net.ListenUDP("udp", &net.UDPAddr{Port: localPort})
 	Throw(err)
 
-	remoteAddr := net.UDPAddr{
-		IP:   net.ParseIP(*addr),
-		Port: remotePort,
-	}
+	remoteAddr := net.UDPAddr{IP: net.ParseIP(*addr), Port: remotePort}
+
+	log.Debugf("[sendmsg] udp remote address: %v", remoteAddr.String())
 
 	_, err = sock.WriteTo([]byte(*data), &remoteAddr)
 	Throw(err)
@@ -68,8 +68,10 @@ func SendMessageBySendMsg() {
 }
 
 func SendMessageByConnect() {
+	remoteAddr := net.UDPAddr{IP: net.ParseIP(*addr), Port: *port}
+	log.Debugf("[connect] udp remote address: %v", remoteAddr.String())
 
-	sock, err := net.Dial("udp", fmt.Sprintf("%v:%v", *addr, *port))
+	sock, err := net.Dial("udp", remoteAddr.String())
 	Throw(err)
 
 	_, err = sock.Write([]byte(*data))
