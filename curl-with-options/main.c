@@ -3,8 +3,21 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "url.h"
+
 int main(int argc, char **argv)
 {
+    if (argc != 2) {
+        printf("invalid argument\n");
+        return -1;
+    }
+
+    URL_RESULT_T result;
+    if (parse_url(argv[1], &result) != 0) {
+        printf("invalid url: %s\n", argv[1]);
+        return -1;
+    }
+
     int fd = socket(AF_INET, SOCK_STREAM, 0);
     if (fd < 0) {
         perror("socket:");
@@ -25,9 +38,9 @@ int main(int argc, char **argv)
     struct sockaddr_in addr = {
         .sin_family = AF_INET,
         // .sin_addr.s_addr = inet_addr("192.168.64.52"),
-        .sin_addr.s_addr = inet_addr("10.244.177.21"),
+        .sin_addr.s_addr = inet_addr(result.domain),
         // .sin_port = htons(32351),
-        .sin_port = htons(80),
+        .sin_port = htons(result.port),
     };
 
     if (connect(fd, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
