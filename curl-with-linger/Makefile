@@ -13,6 +13,6 @@ clean:
 
 -include .deps
 dep:
-	echo -n "$(OBJ):" > .deps
+	echo '$(OBJ): \\' > .deps
 	find . -path ./vendor -prune -o -name '*.go' -print | awk '{print $$0 " \\"}' >> .deps
 	echo "" >> .deps

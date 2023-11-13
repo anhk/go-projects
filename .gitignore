@@ -16,6 +16,7 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+*.o
 
 # Go workspace file
 go.work
@@ -24,3 +25,4 @@ go.work
 curl-with-linger/curl-linger
 udp-send/udpsend
 .deps
+curl-with-options/curl
