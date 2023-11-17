@@ -24,14 +24,14 @@ int parse_options(int argc, char **argv)
 {
     int o;
     int option_index = 0;
-    
+
     while ((o = getopt_long(argc, argv, "m:t:o", long_options, &option_index)) >= 0) {
         switch (o) {
         case 't':
             ttl = atoi(optarg);
             break;
         case 'o':
-            if (optarg == NULL || strcmp(optarg, "false") == 0) {
+            if (optarg != NULL && strcmp(optarg, "false") == 0) {
                 enable_opt = 0;
             }
             break;
