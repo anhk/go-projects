@@ -3,6 +3,7 @@
 #include <getopt.h>
 #include <stdio.h>
 #include <string.h>
+#include <sys/time.h>
 #include <unistd.h>
 
 #include "url.h"
@@ -10,6 +11,7 @@
 static struct option long_options[] = {
     {"ttl", required_argument, NULL, 't'},
     {"option", required_argument, NULL, 'o'},
+    {"timeout", required_argument, NULL, 'm'},
     {NULL, 0, NULL, 0},
 };
 
@@ -17,11 +19,12 @@ int main(int argc, char **argv)
 {
     char *url = NULL;
     socklen_t ttl = 0;
+    int timeout = 0;
     int enable_opt = 1;
 
     int o;
     int option_index = 0;
-    while ((o = getopt_long(argc, argv, "t:o", long_options, &option_index)) >= 0) {
+    while ((o = getopt_long(argc, argv, "m:t:o", long_options, &option_index)) >= 0) {
         switch (o) {
         case 't':
             ttl = atoi(optarg);
@@ -30,6 +33,9 @@ int main(int argc, char **argv)
             if (optarg == NULL || strcmp(optarg, "false") == 0) {
                 enable_opt = 0;
             }
+            break;
+        case 'm':
+            timeout = atoi(optarg);
             break;
         default:
             break;
@@ -61,6 +67,21 @@ int main(int argc, char **argv)
         printf("set ttl to %d\n", ttl);
         if (setsockopt(fd, IPPROTO_IP, IP_TTL, &ttl, sizeof(ttl)) < 0) {
             perror("setsockopt ttl");
+            return -1;
+        }
+    }
+
+    if (timeout > 0) {
+        struct timeval tm = {
+            .tv_sec = timeout,
+            .tv_usec = 0,
+        };
+        if (setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &tm, sizeof(tm)) < 0) {
+            perror("setsockopt timeout");
+            return -1;
+        }
+        if (setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, &tm, sizeof(tm)) < 0) {
+            perror("setsockopt timeout");
             return -1;
         }
     }
