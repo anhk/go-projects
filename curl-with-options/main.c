@@ -15,15 +15,16 @@ static struct option long_options[] = {
     {NULL, 0, NULL, 0},
 };
 
-int main(int argc, char **argv)
-{
-    char *url = NULL;
-    socklen_t ttl = 0;
-    int timeout = 0;
-    int enable_opt = 1;
+static char *url = NULL;
+static socklen_t ttl = 0;
+static int timeout = 0;
+static int enable_opt = 1;
 
+int parse_options(int argc, char **argv)
+{
     int o;
     int option_index = 0;
+    
     while ((o = getopt_long(argc, argv, "m:t:o", long_options, &option_index)) >= 0) {
         switch (o) {
         case 't':
@@ -44,6 +45,14 @@ int main(int argc, char **argv)
 
     if (optind <= argc) {
         url = argv[optind];
+    }
+    return 0;
+}
+
+int main(int argc, char **argv)
+{
+    if (parse_options(argc, argv) < 0) {
+        return -1;
     }
 
     if (url == NULL) {
