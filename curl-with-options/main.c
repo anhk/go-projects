@@ -52,8 +52,8 @@ int main(int argc, char **argv)
     }
 
     URL_RESULT_T result;
-    if (parse_url(argv[1], &result) != 0) {
-        printf("invalid url: %s\n", argv[1]);
+    if (parse_url(url, &result) != 0) {
+        printf("invalid url: %s\n", url);
         return -1;
     }
 
@@ -106,6 +106,7 @@ int main(int argc, char **argv)
         .sin_port = htons(result.port),
     };
 
+    printf("connect to %s:%d\n", result.domain, result.port);
     if (connect(fd, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
         printf("connect: [%d] %s\n", errno, strerror(errno));
         return -1;
