@@ -7,7 +7,7 @@
 int parse_url(char *raw_url, URL_RESULT_T *result)
 {
     memset(result, 0, sizeof(URL_RESULT_T));
-    result->port = 80;
+    result->port = 0;
 
     if (strncmp(raw_url, "http://", 7) == 0) {
         strncpy(result->protocol, raw_url, 7);

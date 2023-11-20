@@ -2,6 +2,7 @@
 #include <errno.h>
 #include <getopt.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/time.h>
 #include <unistd.h>
@@ -12,6 +13,7 @@ static struct option long_options[] = {
     {"ttl", required_argument, NULL, 't'},
     {"option", required_argument, NULL, 'o'},
     {"timeout", required_argument, NULL, 'm'},
+    {"bind", required_argument, NULL, 'b'},
     {NULL, 0, NULL, 0},
 };
 
@@ -19,13 +21,14 @@ static char *url = NULL;
 static socklen_t ttl = 0;
 static int timeout = 0;
 static int enable_opt = 1;
+static char *binding = NULL;
 
 int parse_options(int argc, char **argv)
 {
     int o;
     int option_index = 0;
 
-    while ((o = getopt_long(argc, argv, "m:t:o", long_options, &option_index)) >= 0) {
+    while ((o = getopt_long(argc, argv, "m:t:b:o", long_options, &option_index)) >= 0) {
         switch (o) {
         case 't':
             ttl = atoi(optarg);
@@ -37,6 +40,9 @@ int parse_options(int argc, char **argv)
             break;
         case 'm':
             timeout = atoi(optarg);
+            break;
+        case 'b':
+            binding = optarg;
             break;
         default:
             break;
@@ -65,6 +71,7 @@ int main(int argc, char **argv)
         printf("invalid url: %s\n", url);
         return -1;
     }
+    result.port = result.port == 0 ? 80 : result.port;
 
     int fd = socket(AF_INET, SOCK_STREAM, 0);
     if (fd < 0) {
@@ -109,6 +116,27 @@ int main(int argc, char **argv)
         }
     }
 
+    if (binding != NULL) {
+        URL_RESULT_T b;
+        if (parse_url(binding, &b) != 0) {
+            printf("parse binding url failed: %s\n", binding);
+            return -1;
+        }
+
+        struct sockaddr_in local = {
+            .sin_family = AF_INET,
+            .sin_addr.s_addr = inet_addr(b.domain),
+            .sin_port = htons(b.port),
+        };
+
+        printf("bind to %s:%d\n", b.domain, b.port);
+
+        if (bind(fd, (struct sockaddr *)&local, sizeof(struct sockaddr)) != 0) {
+            perror("bind");
+            return -1;
+        }
+    }
+
     struct sockaddr_in addr = {
         .sin_family = AF_INET,
         .sin_addr.s_addr = inet_addr(result.domain),
@@ -135,6 +163,8 @@ int main(int argc, char **argv)
     if ((ret = read(fd, response, sizeof(response))) < 0) {
         perror("read");
         return -1;
+    } else if (ret == 0){
+        printf("reset by remote\n");
     }
 
     printf("%s\n", response);
