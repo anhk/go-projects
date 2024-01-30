@@ -25,7 +25,7 @@ func runAsClient() {
 	var data = make([]byte, 8192)
 	n, _, err := conn.ReadFromUDP(data)
 	check(err)
-	fmt.Printf("read from remote %d", n)
+	fmt.Printf("read from remote %d\n", n)
 
 	var peer net.UDPAddr
 	binary.Read(bytes.NewReader(data[:n]), binary.BigEndian, &peer)
@@ -36,7 +36,7 @@ func runAsClient() {
 
 	go func() {
 		for i := 0; i < 10; i++ {
-			_, err := conn.Write([]byte(fmt.Sprintf("-- %d -- \n", i)))
+			_, err := conn.Write([]byte(fmt.Sprintf("-- %d -- ", i)))
 			check(err)
 			time.Sleep(time.Second)
 		}
