@@ -25,9 +25,11 @@ func runAsClient() {
 	var data = make([]byte, 8192)
 	n, _, err := conn.ReadFromUDP(data)
 	check(err)
+	fmt.Printf("read from remote %d", n)
 
 	var peer net.UDPAddr
 	binary.Read(bytes.NewReader(data[:n]), binary.BigEndian, &peer)
+	fmt.Printf("peer: %v", peer.String())
 
 	conn, err = net.DialUDP("udp", local, &peer)
 	check(err)

@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"net"
+	"time"
 )
 
 func main() {
@@ -33,6 +34,7 @@ func main() {
 			break
 		}
 	}
+	time.Sleep(time.Second * 5)
 }
 
 func check(e any) {
