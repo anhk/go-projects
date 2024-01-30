@@ -32,6 +32,7 @@ func runAsClient() {
 
 	binary.Read(bytes.NewReader(data[:n]), binary.BigEndian, &peer)
 	fmt.Printf("peer: %v", peer.String())
+	conn.Close()
 
 	conn, err = net.DialUDP("udp", local, peer)
 	check(err)
