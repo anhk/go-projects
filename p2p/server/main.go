@@ -25,6 +25,7 @@ func main() {
 		if len(peers) == 2 {
 			r1 := &bytes.Buffer{}
 			binary.Write(r1, binary.BigEndian, peers[0])
+			fmt.Printf("r1.Len: %d", r1.Len())
 			listener.WriteToUDP(r1.Bytes(), peers[1])
 
 			r2 := &bytes.Buffer{}
