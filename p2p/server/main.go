@@ -24,11 +24,11 @@ func main() {
 
 		if len(peers) == 2 {
 
-			r1 := bytes.NewBuffer(data)
+			r1 := bytes.NewBuffer(nil)
 			binary.Write(r1, binary.BigEndian, peers[0])
 			listener.WriteToUDP(r1.Bytes(), peers[1])
 
-			r2 := bytes.NewBuffer(data)
+			r2 := bytes.NewBuffer(nil)
 			binary.Write(r2, binary.BigEndian, peers[1])
 			listener.WriteToUDP(r2.Bytes(), peers[0])
 			break
