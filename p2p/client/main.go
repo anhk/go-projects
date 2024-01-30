@@ -27,11 +27,13 @@ func runAsClient() {
 	check(err)
 	fmt.Printf("read from remote %d\n", n)
 
-	var peer net.UDPAddr
+	peer, err := net.ResolveUDPAddr("udp", string(data[:n]))
+	check(err)
+
 	binary.Read(bytes.NewReader(data[:n]), binary.BigEndian, &peer)
 	fmt.Printf("peer: %v", peer.String())
 
-	conn, err = net.DialUDP("udp", local, &peer)
+	conn, err = net.DialUDP("udp", local, peer)
 	check(err)
 
 	go func() {
