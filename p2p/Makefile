@@ -13,6 +13,6 @@ clean:
 
 -include .deps
 dep:
-	echo -n "$(OBJ):" > .deps
+	echo '$(OBJ): \\' > .deps
 	find . -name '*.go' | awk '{print $$0 " \\"}' >> .deps
 	echo "" >> .deps
