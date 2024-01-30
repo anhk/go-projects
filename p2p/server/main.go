@@ -22,7 +22,7 @@ func main() {
 
 		if len(peers) == 2 {
 			listener.WriteToUDP([]byte(peers[0].String()), peers[1])
-			listener.WriteToUDP([]byte(peers[1].String()), peers[2])
+			listener.WriteToUDP([]byte(peers[1].String()), peers[0])
 			break
 		}
 	}
