@@ -26,3 +26,5 @@ curl-with-linger/curl-linger
 udp-send/udpsend
 .deps
 curl-with-options/curl
+p2p/p2p-client
+p2p/p2p-server
