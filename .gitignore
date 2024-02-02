@@ -28,3 +28,5 @@ udp-send/udpsend
 curl-with-options/curl
 p2p/p2p-client
 p2p/p2p-server
+p2p-2/p2p-client
+p2p-2/p2p-server
