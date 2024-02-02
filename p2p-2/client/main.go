@@ -97,7 +97,7 @@ func main() {
 	// 指定本地端口
 	localPort := RandPort(10000, 50000)
 	// 向 P2P 转发服务器注册自己的临时生成的公网 IP (请注意,Dial 这里拨号指定了自己临时生成的本地端口)
-	serverConn, err := reuseport.Dial("tcp", fmt.Sprintf(":%d", localPort), "你自己的公网服务器IP:6999")
+	serverConn, err := reuseport.Dial("tcp", fmt.Sprintf(":%d", localPort), "xxfe.com:6999")
 	if err != nil {
 		panic("请求远程服务器失败" + err.Error())
 	}
