@@ -54,6 +54,7 @@ func (s *Handler) DailP2PAndSayHello(address, uid string) {
 		if err != nil {
 			fmt.Println("请求第", errCount, "次地址失败,用户地址:", address)
 			errCount++
+			fmt.Println("error is ", err.Error())
 			continue
 		}
 		break
@@ -61,6 +62,8 @@ func (s *Handler) DailP2PAndSayHello(address, uid string) {
 	if errCount > 3 {
 		panic("客户端连接失败")
 	}
+
+	fmt.Println("connect ok")
 	s.P2PConn = conn
 	go s.P2PRead()
 	go s.P2PWrite()
